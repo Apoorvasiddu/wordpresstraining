@@ -1,0 +1,27 @@
+.clinicname1{
+    color: rgb(100, 149, 237);
+    margin-left: 8%;
+    font-weight: bold;
+    font-size: 31px;
+}
+.clinicname2{
+    color: rgb(127, 237, 100);
+    font-weight: bold;
+    font-size: 31px;
+}
+.infotext{
+    font-weight: lighter;
+}
+.infotextvalue{
+    font-weight: bold;
+}
+/* .headerDesign{
+    background-color: rgb(67, 128, 243);
+    padding:1%;
+    margin-top: 2%;
+} */
+/* .headerMenu span a{
+    padding-left: 4%;
+    color: black;
+    text-decoration: none;
+} */

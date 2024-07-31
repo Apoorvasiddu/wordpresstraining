@@ -1,0 +1,394 @@
+/*
+    Theme Name: New Theme
+    Theme URI: localhost/newTheme
+    Author: Appu
+    Description: Creating new theme
+*/
+/* .clinicname1{
+    color: rgb(100, 149, 237);
+}
+.headerMenu {     width: 100%;
+    margin-right: 190px; }
+.headerMenu li { float: left;
+    color: #1b1919; 
+    list-style-type: none;
+}
+.headerMenu li a { padding: 22px 15px 30px 15px;
+    color: #141212;
+    text-decoration: none;
+    float: left;
+    width: 100%;
+    font-size: 19px; } */
+
+/*
+Theme Name: customtheme
+Author: Vegibit
+Author URI: https://vegibit.com
+Version: 1.0
+ */
+
+ body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #545454;
+    margin: 0;
+}
+
+a:link, .headerMenu a:visited {
+    color: #4285f4;
+    text-decoration: none;
+    font-style: italic;
+    font-family: emoji;
+}
+
+p {
+    line-height: 1.7em;
+}
+
+/* div.container {
+    max-width: 960px;
+    margin: 0 auto;
+} */
+
+/* article.post {
+    border-bottom: 4px dashed #ecf0f1;
+}
+
+article.post:last-of-type {
+    border-bottom: none;
+}
+
+.site-header {
+    border-bottom: 3px solid #ecf0f1;
+}
+
+.site-footer {
+    border-top: 3px solid #ecf0f1;
+} */
+
+.site-header {
+    padding: 3%;
+    background-color: black;   
+    display: flex;
+    justify-content: space-between;
+    color: #fff;
+    font-weight: bold;
+    font-size: large;
+    /* margin-left: -21%;
+    margin-right: -6%;
+    background-color: black;
+    padding: 3%;
+    margin-top: -1%;
+    width: 137%; */
+}
+
+.site-header a {
+    color: #fff;
+}
+
+.site-footer {
+    background-color: black;
+    padding: 2% 2% 2% 12%;
+    /* margin: -8%; */
+    /* padding: 3%; */
+}
+
+.page_header {
+    background-color: dimgrey;
+    color: aliceblue;
+    font-size: xx-large;
+    padding: 10px 15px;
+    margin: 2% 40%;
+    font-weight: bold;
+    display: inline;
+    border-radius: 40%;
+    border-style: double;
+    font-style: italic;
+    font-family: auto;
+    background: linear-gradient(45deg, #F23, #495, #0EE);
+}
+
+/* .postbody{
+    
+    background-image: url(images/screenshot.jpg);
+    background-position: 55% center;
+	background-repeat: no-repeat;
+	border: none;
+	cursor: pointer;
+	margin: 3px 0;
+	padding: 0 0 0 34px;
+	position: relative;
+    background-color: black;
+    margin-bottom: 20px;
+} */
+.headerMenu,
+.headerMenu li
+{
+    display: inline-block;
+    margin: 0;
+    /* padding-left: 2%; */
+
+}
+.sub-menu li{
+    display: block;
+}
+ li a{
+    padding: 5px;
+}
+.postbody{
+    padding: 0 3%;
+    /* margin-bottom: 100%; */
+    margin: 2%;
+}
+
+.sticky {
+    position: sticky;
+    top: 5%;
+}
+
+#headerbanner{
+	border: none;
+	cursor: pointer;
+    background-size: cover;
+	padding: 0 0 0 0;
+    background-size: 100% 100%;
+    background-image: url(images/siteimage.jpg);
+	background-repeat: no-repeat;
+}
+/* Welcome page */
+
+.welcome-container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-image: url(images/welcomepagebg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.welcome-container h2 {
+    margin-bottom: 10px;
+    display: inline-block;
+    animation: slideIn 3s ease-out;
+    background: linear-gradient(116deg, #F04, #490, #0B5);
+    background-size: 200% 200%;
+    color: #fff;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient 5s ease infinite, slideIn 3s ease-out;
+    font-size: xx-large;
+    font-family: auto;
+}
+
+.welcome-container p {
+    background: linear-gradient(45deg, #f06, #48f, #0f0);
+    margin: 2% 8%;
+}
+
+.welcome-container {
+    font-family: Arial, sans-serif;
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+    margin: 2% auto;
+    background-color: #f0f0f0;
+    padding-top: 6%;
+    width: 60%;
+}
+
+.tutorials-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Adjust the gap between items as needed */
+    margin-bottom: 20px;
+    /* justify-content: space-between; */
+}
+
+.tutorial-item {
+    flex: 0 1 calc(25% - 20px); /* Ensure each item takes up 25% of the row with the gap */
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+    min-height: 200px; /* Set a minimum height for consistent sizing */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tutorial-item p {
+    margin-bottom: 10px;
+}
+
+.tutorial-item a {
+    text-decoration: none;
+    color: #0073aa;
+    font-weight: bold;
+    margin-top: auto; /* Push the link to the bottom */
+}
+
+.tutorial-item a:hover {
+    color: #005177;
+}
+
+.site-content {
+    background-image: url(images/tutorialbg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* Basic Styling for Contact Form */
+#contact-form {
+    max-width: 600px;
+    margin: 3% auto;
+    padding: 20px;
+    background-color: #F9FA95;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-image: url(images/contactusbg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: burlywood;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+button[type="submit"] {
+    background-color: #0073aa;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #005a87;
+}
+
+button[type="submit"]:focus {
+    outline: none;
+}
+
+
+/* About page css */
+
+/* Reset some default styles */
+body, h1, h2, h3, p, ul {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+main {
+    padding: 20px;
+    background: #fff;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.about_main {
+    background-image: url(images/aboutbg1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 70%;
+    margin: 3% auto;
+}
+
+.about h2 {
+    color: #33F;
+    font-size: xx-large;
+    font-family: math;
+}
+
+.about p {
+    color: gainsboro;
+    font-size: larger;
+    font-style: oblique;
+    font-family: auto;
+    padding: 3%;
+    text-align: justify;
+}
+
+.about h3 {
+    color: rgb(255 105 0);
+    font-size: x-large;
+    font-family: cursive;
+    padding: 2%;
+}
+
+.about ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    color: gainsboro;
+    font-size: larger;
+    padding: 2% 4%;
+    font-style: oblique;
+    font-family: auto;
+}
+
+.about a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.about a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    position: sticky;
+    bottom: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
