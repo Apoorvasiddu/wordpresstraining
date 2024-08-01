@@ -13,9 +13,9 @@ include(get_template_directory() . '/html/custom_alert_box.html');
 <script type="text/javascript">
     var myScriptVars = <?php echo json_encode(array(
         'restUrl' => esc_url_raw(rest_url('custom/v1/')),
-        'homeUrl' => esc_url(home_url('/'))
+        'homeUrl' => esc_url(home_url('/')),
+        'loginUrl' => esc_url(home_url('/custom-login'))
     )); ?>;
-    console.log('myScriptVars:', myScriptVars);
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/html/css/page-login.css">
@@ -60,7 +60,7 @@ include(get_template_directory() . '/html/custom_alert_box.html');
                   </div>
                   <div class="group">
                       <label for="signup-password" class="label">Password &nbsp;&nbsp;<p id="strength-message">Password strength: </p></label> 
-                      <input id="signup-password" name="signup_password" type="password" class="input" data-type="password">
+                      <input id="signup-password" name="signup_password" type="password" class="input">
                   </div>
                   <div class="group">
                       <label for="signup-repeat-password" class="label">Repeat Password &nbsp;&nbsp;<p id="matching-pass"></p></label>

@@ -181,3 +181,39 @@ function user_register($request) {
     // Return a success response
     return new WP_REST_Response(array('message' => 'Registration successful', 'user_id' => $user_id), 200);
 }
+
+// Register REST API route for password reset
+add_action('rest_api_init', function () {
+    register_rest_route('custom/v1', '/resetpassword', array(
+        'methods' => 'POST',
+        'callback' => 'reset_forgot_password',
+        'permission_callback' => '__return_true'
+    ));
+});
+
+function reset_forgot_password(WP_REST_Request $request) {
+    // Get key, login, password, and confirm_password from request
+    $key = sanitize_text_field($request->get_param('key'));
+    $login = sanitize_text_field($request->get_param('login'));
+    $password = sanitize_text_field($request->get_param('password'));
+    $confirm_password = sanitize_text_field($request->get_param('confirm_password'));
+
+    // Check if the key and login are valid
+    $user = check_password_reset_key($key, $login);
+    if (is_wp_error($user)) {
+        return new WP_Error('invalid_key', 'Invalid password reset key or login.', array('status' => 400));
+    }
+
+    // Check if passwords match
+    if ($password !== $confirm_password) {
+        return new WP_Error('password_mismatch', 'Passwords do not match.', array('status' => 400));
+    }
+
+    // Reset the password
+    reset_password($user, $password);
+
+    // Return success response
+    return new WP_REST_Response(array('message' => 'Password has been reset. You can now log in.'), 200);
+}
+
+

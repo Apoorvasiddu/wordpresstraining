@@ -54,7 +54,7 @@ jQuery(document).ready(function($) {
             contentType: 'application/json',
             success: function(response) {
                 showCustomAlert(response.message);
-                // Optionally, clear the form or redirect
+                window.location.href = myScriptVars.loginUrl;
             },
             error: function(xhr) {
                 showCustomAlert("Failed: " + (xhr.responseJSON.message || 'Unknown error'));
@@ -146,6 +146,7 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 // Redirect to home page
                 showCustomAlert(response.message);
+                window.location.href = myScriptVars.loginUrl;
             },
             error: function(xhr) {
                 showCustomAlert("Failed: " + (xhr.responseJSON.message || 'Unknown error'));
@@ -155,6 +156,62 @@ jQuery(document).ready(function($) {
         return false;
     });
 
+    // Forgot Password form submission handler
+    $('#reset_password').on('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+    
+        var password = $("#password").val().trim();
+        var confirm_password = $("#confirm_password").val().trim();
+        var urlParams = new URLSearchParams(window.location.search);
+        var key = urlParams.get('key'); // Get the value of 'key' parameter
+        var login = urlParams.get('login'); // Get the login from a hidden input or URL parameter
+    
+        // Validation
+        if (!password || !confirm_password) {
+            var missingFields = [];
+            if (!password) missingFields.push("Password");
+            if (!confirm_password) missingFields.push("Confirm Password");
+            showCustomAlert("Please enter your " + missingFields.join(", "));
+            return false;
+        }
+    
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!passwordPattern.test(password)) {
+            showCustomAlert('Password must be at least 8 characters long, contain at least one special character, one uppercase letter, one lowercase letter, and one number.');
+            return false;
+        }
+    
+        if (password !== confirm_password) {
+            showCustomAlert("Passwords do not match.");
+            return false;
+        }
+    
+        // Prepare data for AJAX request
+        var data = {
+            key: key,
+            login: login,
+            password: password,
+            confirm_password: confirm_password
+        };
+    
+        // AJAX request
+        $.ajax({
+            url: myScriptVars.restUrl + 'resetpassword',
+            method: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(response) {
+                showCustomAlert(response.message);
+                window.location.href = myScriptVars.loginUrl;
+            },
+            error: function(xhr) {
+                showCustomAlert("Failed: " + (xhr.responseJSON.message || 'Unknown error'));
+            }
+        });
+    
+        return false;
+    });
+    
 });
 
  // Password strength checker
