@@ -9,6 +9,13 @@
     <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>">
+    <script type="text/javascript">
+        var myScriptVars = <?php echo json_encode(array(
+            'restUrl' => esc_url_raw(rest_url('custom/v1/')),
+            'homeUrl' => esc_url(home_url('/'))
+        )); ?>;
+        console.log('myScriptVars:', myScriptVars);
+    </script>
     <?php wp_head(); ?>
 </head>
 

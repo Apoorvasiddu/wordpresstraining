@@ -3,8 +3,9 @@
  * Template Name: Contact Page Template
  */
 ?>
-
-<form id="contact-form" method="post" action="#">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="<?php echo get_template_directory_uri(); ?>/html/scripts/contact.js"></script>
+<form id="contact-form" method="post" action="">
     <div class="form-group">
         <label class="form-label" for="Name">Name:</label>
         <input type="text" name="name" id="Name" placeholder="Enter your name">

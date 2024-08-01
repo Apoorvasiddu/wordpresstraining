@@ -11,30 +11,30 @@ if ( is_user_logged_in() ) {
 $error = '';
 $success = '';
 
-if ( isset( $_POST['login_submit'] ) ) {
-    $username = sanitize_user( $_POST['username'] );
-    $password = $_POST['password'];
-    $remember = isset( $_POST['rememberme'] ) ? true : false;
+// if ( isset( $_POST['login_submit'] ) ) {
+//     $username = sanitize_user( $_POST['username'] );
+//     $password = $_POST['password'];
+//     $remember = isset( $_POST['rememberme'] ) ? true : false;
 
-    if ( empty( $username ) || empty( $password ) ) {
-        $error = 'Username and password are required.';
-    } else {
-        $creds = array(
-            'user_login'    => $username,
-            'user_password' => $password,
-            'remember'      => $remember,
-        );
+//     if ( empty( $username ) || empty( $password ) ) {
+//         $error = 'Username and password are required.';
+//     } else {
+//         $creds = array(
+//             'user_login'    => $username,
+//             'user_password' => $password,
+//             'remember'      => $remember,
+//         );
 
-        $user = wp_signon( $creds, false );
+//         $user = wp_signon( $creds, false );
 
-        if ( is_wp_error( $user ) ) {
-            $error = $user->get_error_message();
-        } else {
-            wp_redirect( home_url() );
-            exit;
-        }
-    }
-}
+//         if ( is_wp_error( $user ) ) {
+//             $error = $user->get_error_message();
+//         } else {
+//             wp_redirect( home_url() );
+//             exit;
+//         }
+//     }
+// }
 
 if ( isset( $_POST['reset_password_submit'] ) ) {
     $user_login = sanitize_user( $_POST['user_login'] );
@@ -70,7 +70,15 @@ if ( isset( $_POST['reset_password_submit'] ) ) {
         }
     }
 }
+include(get_template_directory() . '/html/custom_alert_box.html');
 ?>
+<script type="text/javascript">
+    var myScriptVars = <?php echo json_encode(array(
+        'restUrl' => esc_url_raw(rest_url('custom/v1/')),
+        'homeUrl' => esc_url(home_url('/'))
+    )); ?>;
+    console.log('myScriptVars:', myScriptVars);
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/html/css/page-login.css">
 <script src="<?php echo get_template_directory_uri(); ?>/html/scripts/page-login.js"></script>
@@ -81,7 +89,7 @@ if ( isset( $_POST['reset_password_submit'] ) ) {
       <input id="tab-3" type="radio" name="tab" class="forgot-password"><label for="tab-3" class="tab">Forgot Password</label>
       <div class="login-form">
           <div class="sign-in-htm">
-              <form method="post" action="">
+              <form id="login_form" method="post" action="">
                   <div class="group">
                       <label for="username" class="label">Username</label>
                       <input id="username" name="username" type="text" class="input">
@@ -107,17 +115,17 @@ if ( isset( $_POST['reset_password_submit'] ) ) {
               </form>
           </div>
           <div class="sign-up-htm">
-              <form method="post" action="">
+              <form id="register_form" method="post" action="">
                   <div class="group">
                       <label for="signup-username" class="label">Username</label>
                       <input id="signup-username" name="signup_username" type="text" class="input">
                   </div>
                   <div class="group">
-                      <label for="signup-password" class="label">Password</label>
+                      <label for="signup-password" class="label">Password &nbsp;&nbsp;<p id="strength-message">Password strength: </p></label> 
                       <input id="signup-password" name="signup_password" type="password" class="input" data-type="password">
                   </div>
                   <div class="group">
-                      <label for="signup-repeat-password" class="label">Repeat Password</label>
+                      <label for="signup-repeat-password" class="label">Repeat Password &nbsp;&nbsp;<p id="matching-pass"></p></label>
                       <input id="signup-repeat-password" name="signup_repeat_password" type="password" class="input" data-type="password">
                   </div>
                   <div class="group">

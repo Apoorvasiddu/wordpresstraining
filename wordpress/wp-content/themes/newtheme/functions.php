@@ -1,17 +1,5 @@
 <?php
-// add_action('rest_api_init', function(){
-// 	register_rest_route('customapi/v1','display/customer/',[
-// 		'methods' => 'GET',
-// 		'callback' => 'custom_display_customer',
-// 		// 'permission_callback' => '_return_true'
-// 	]);
-// });
-
-// function custom_display_customer(){
-// 	echo json_encode(['message'=>'Create custome api!!!']);
-// 	exit;
-// }
-
+require get_template_directory() . '/custom-api.php';
 function my_theme_setup() {
     // Register navigation menus
     register_nav_menus(array(
@@ -183,51 +171,6 @@ function my_contact_form_shortcode() {
 }
 
 add_shortcode('my_contact_form', 'my_contact_form_shortcode');
-
-// Enqueue your JavaScript file
-function enqueue_custom_scripts() {
-    // Enqueue the custom script
-    wp_enqueue_script('custom-script', get_template_directory_uri() . '/html/scripts/contact.js', array('jquery'), null, true);
-
-    // Pass PHP variables to the script
-    wp_localize_script('custom-script', 'myScriptVars', array(
-        'restUrl' => esc_url_raw(rest_url('myplugin/v1/'))
-    ));
-}
-add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
-
-// Contact form API call
-
-add_action('rest_api_init', function () {
-    register_rest_route('myplugin/v1', '/contact', array(
-        'methods' => 'POST',
-        'callback' => 'handle_contact_form_submission',
-        'permission_callback' => '__return_true'
-    ));
-});
-
-function handle_contact_form_submission($request) {
-    $name = sanitize_text_field($request['name']);
-    $phone = sanitize_text_field($request['phone']);
-    $email = sanitize_email($request['email']);
-    $message = sanitize_textarea_field($request['message']);
-
-    if (empty($name) || empty($phone) || empty($email) || empty($message)) {
-        return new WP_Error('missing_fields', 'Please fill in all required fields.', array('status' => 400));
-    }
-
-    if (!is_email($email)) {
-        return new WP_Error('invalid_email', 'Invalid email address.', array('status' => 400));
-    }
-
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'contactform';
-
-    $wpdb->insert($table_name,array('name' => $name,'phone' => $phone,'email' => $email,'message' => $message,),
-            array('%s','%s','%s','%s'));
-
-    return new WP_REST_Response('Success', 200);
-}
 
 // Custom Login 
 
