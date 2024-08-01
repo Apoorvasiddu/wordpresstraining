@@ -8,68 +8,6 @@ if ( is_user_logged_in() ) {
     exit;
 }
 
-$error = '';
-$success = '';
-
-// if ( isset( $_POST['login_submit'] ) ) {
-//     $username = sanitize_user( $_POST['username'] );
-//     $password = $_POST['password'];
-//     $remember = isset( $_POST['rememberme'] ) ? true : false;
-
-//     if ( empty( $username ) || empty( $password ) ) {
-//         $error = 'Username and password are required.';
-//     } else {
-//         $creds = array(
-//             'user_login'    => $username,
-//             'user_password' => $password,
-//             'remember'      => $remember,
-//         );
-
-//         $user = wp_signon( $creds, false );
-
-//         if ( is_wp_error( $user ) ) {
-//             $error = $user->get_error_message();
-//         } else {
-//             wp_redirect( home_url() );
-//             exit;
-//         }
-//     }
-// }
-
-if ( isset( $_POST['reset_password_submit'] ) ) {
-    $user_login = sanitize_user( $_POST['user_login'] );
-
-    if ( empty( $user_login ) ) {
-        $error = 'Username or Email is required.';
-    } else {
-        $user = get_user_by( 'login', $user_login );?>
-        <script>
-          console.log(<?php $user ?>)
-        </script><?php
-        if ( ! $user ) {
-            $user = get_user_by( 'email', $user_login );
-        }
-
-        if ( ! $user ) {
-            $error = 'Invalid username or email.';
-        } else {
-            include get_template_directory() . '/templates/custom-reset-password-email.php';
-            $reset_key = get_password_reset_key($user);
-            $reset_link = network_site_url("forgot-password?action=rp&key=$reset_key&login=" . rawurlencode($user->user_login) . "&email=" . rawurlencode($user->user_email), 
-            'login');
-            
-            // Include the custom email template
-            $email_content = custom_reset_password_email_template($reset_link, $user->user_login);
-            
-            // Set the email headers to send HTML email
-            $headers = array('Content-Type: text/html; charset=UTF-8');
-            
-            // Send the email
-            wp_mail($user->user_email, 'Password Reset', $email_content, $headers);
-            $success = 'Check your email for the confirmation link.';
-        }
-    }
-}
 include(get_template_directory() . '/html/custom_alert_box.html');
 ?>
 <script type="text/javascript">
@@ -142,7 +80,7 @@ include(get_template_directory() . '/html/custom_alert_box.html');
               </form>
           </div>
           <div class="forgot-pass-htm">
-              <form method="post" action="">
+              <form id="forgot_password" method="post" action="">
                   <div class="group">
                       <label for="user_login" class="label">Username or Email</label>
                       <input id="user_login" name="user_login" type="text" class="input">

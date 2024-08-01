@@ -208,4 +208,12 @@ function custom_smtp_settings($phpmailer) {
     $phpmailer->FromName   = SMTP_FROMNAME;
 }
 
+function redirect_non_admin_users() {
+    if (is_admin() && !current_user_can('administrator') && !(defined('DOING_AJAX') && DOING_AJAX)) {
+        wp_redirect(home_url());
+        exit;
+    }
+}
+add_action('admin_init', 'redirect_non_admin_users');
+
 ?>

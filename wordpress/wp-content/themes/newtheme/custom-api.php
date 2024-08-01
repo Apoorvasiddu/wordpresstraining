@@ -1,5 +1,5 @@
 <?php
-
+include get_template_directory() . '/templates/custom-reset-password-email.php';
 // Contact form API call
 
 add_action('rest_api_init', function () {
@@ -69,4 +69,115 @@ function submit_login($request) {
     }
 
     return new WP_REST_Response(array('message' => 'Login successful', 'user_id' => $user->ID), 200);
+}
+
+// Forgot password API
+
+add_action('rest_api_init', function () {
+    register_rest_route('custom/v1', '/forgotpass', array(
+        'methods' => 'POST',
+        'callback' => 'forgot_password',
+        'permission_callback' => '__return_true'
+    ));
+});
+
+function forgot_password($request) {
+    $username = sanitize_text_field($request['username']);
+
+    if (empty($username)) {
+        return new WP_Error('missing_fields', 'Please fill in all required fields.', array('status' => 400));
+    }
+
+    if (!is_email($username)) {
+        return new WP_Error('invalid_email', 'Invalid email address.', array('status' => 400));
+    }
+
+    $user = get_user_by('email', $username);
+
+    if (!$user) {
+        return new WP_Error('invalid_user', 'Invalid email address.', array('status' => 400));
+    }
+
+    // Generate a password reset key
+    $reset_key = get_password_reset_key($user);
+    if (is_wp_error($reset_key)) {
+        return new WP_Error('reset_key_error', $reset_key->get_error_message(), array('status' => 500));
+    }
+
+    $reset_link = network_site_url("forgot-password?action=rp&key=$reset_key&login=" . rawurlencode($user->user_login) . "&email=" . rawurlencode($user->user_email), 'login');
+    $email_content = custom_reset_password_email_template($reset_link, $user->user_login);
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+
+    // Send the email
+    if (wp_mail($user->user_email, 'Password Reset', $email_content, $headers)) {
+        return new WP_REST_Response(array('message' => 'Check your email for the confirmation link.'), 200);
+    } else {
+        return new WP_Error('email_failed', 'Failed to send the email.', array('status' => 500));
+    }
+}
+
+// Register API
+add_action('rest_api_init', function () {
+    register_rest_route('custom/v1', '/register', array(
+        'methods' => 'POST',
+        'callback' => 'user_register',
+        'permission_callback' => '__return_true'
+    ));
+});
+
+function user_register($request) {
+    $username = sanitize_text_field($request['username']);
+    $password = sanitize_text_field($request['password']);
+    $email = sanitize_email($request['email']);
+    // $first_name = sanitize_text_field($request['first_name']);
+    // $last_name = sanitize_text_field($request['last_name']);  
+
+    if (empty($username) || empty($password) || empty($email)) {
+        return new WP_Error('missing_fields', 'Please fill in all required fields.', array('status' => 400));
+    }
+
+    if (!is_email($email)) {
+        return new WP_Error('invalid_email', 'Invalid email address.', array('status' => 400));
+    }
+
+    // Check if username already exists
+    if (username_exists($username)) {
+        return new WP_Error('username_exists', 'Username already exists.', array('status' => 400));
+    }
+
+    // Check if email already exists
+    if (email_exists($email)) {
+        return new WP_Error('email_exists', 'Email already exists.', array('status' => 400));
+    }
+
+    // Create the user
+    $user_id = wp_create_user($username, $password, $email);
+
+    // Check for errors
+    if (is_wp_error($user_id)) {
+        return $user_id; // Return the error
+    }
+
+    // Set the user's role to "Subscriber"
+    $user = new WP_User($user_id);
+    $user->set_role('subscriber');
+
+    // Set the first and last name if provided
+    // if (!empty($first_name)) {
+    //     update_user_meta($user_id, 'first_name', $first_name);
+    // }
+    // if (!empty($last_name)) {
+    //     update_user_meta($user_id, 'last_name', $last_name);
+    // }
+
+    // // Set the display name
+    // if (!empty($first_name) && !empty($last_name)) {
+    //     wp_update_user(array(
+    //         'ID' => $user_id,
+    //         'display_name' => $first_name . ' ' . $last_name
+    //     ));
+    // }
+
+    // Return a success response
+    return new WP_REST_Response(array('message' => 'Registration successful', 'user_id' => $user_id), 200);
 }

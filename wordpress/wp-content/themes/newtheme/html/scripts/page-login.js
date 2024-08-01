@@ -31,7 +31,7 @@ jQuery(document).ready(function($) {
             showCustomAlert("Passwords do not match.");
             return false;
         }
-        
+
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
             showCustomAlert('Please enter a valid email address.');
@@ -53,11 +53,11 @@ jQuery(document).ready(function($) {
             data: JSON.stringify(data),
             contentType: 'application/json',
             success: function(response) {
-                alert("Success");
+                showCustomAlert(response.message);
                 // Optionally, clear the form or redirect
             },
             error: function(xhr) {
-                alert("Failed: " + (xhr.responseJSON.message || 'Unknown error'));
+                showCustomAlert("Failed: " + (xhr.responseJSON.message || 'Unknown error'));
             }
         });
 
@@ -103,6 +103,49 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 // Redirect to home page
                 window.location.href = myScriptVars.homeUrl;
+            },
+            error: function(xhr) {
+                showCustomAlert("Failed: " + (xhr.responseJSON.message || 'Unknown error'));
+            }
+        });
+
+        return false;
+    });
+
+    // Forgot Password form submission handler
+    $('#forgot_password').on('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        var username = $("#user_login").val().trim();
+        
+        // Validation
+        if (!username) {
+            var missingFields = [];
+            if (!username) missingFields.push("User Name");
+            showCustomAlert("Please enter your " + missingFields.join(", "));
+            return false;
+        }
+
+        // Prepare data for AJAX request
+        var data = {
+            username: username
+        };
+
+        // Debugging
+        if (typeof myScriptVars === 'undefined') {
+            console.error('myScriptVars is not defined.');
+            return false;
+        }
+
+        // AJAX request
+        $.ajax({
+            url: myScriptVars.restUrl + 'forgotpass',
+            method: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(response) {
+                // Redirect to home page
+                showCustomAlert(response.message);
             },
             error: function(xhr) {
                 showCustomAlert("Failed: " + (xhr.responseJSON.message || 'Unknown error'));
