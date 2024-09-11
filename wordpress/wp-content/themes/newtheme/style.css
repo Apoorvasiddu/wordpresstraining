@@ -91,6 +91,9 @@ article.post:last-of-type {
     padding: 2% 2% 2% 12%;
     /* margin: -8%; */
     /* padding: 3%; */
+    /* bottom: 0;
+    position: absolute;
+    width: 86%; */
 }
 
 .page_header {
@@ -154,6 +157,7 @@ article.post:last-of-type {
     background-size: 100% 100%;
     background-image: url(images/siteimage.jpg);
 	background-repeat: no-repeat;
+    /* height: 90vh; */
 }
 /* Welcome page */
 
@@ -380,8 +384,29 @@ footer {
     bottom: 0;
 }
 
+.download-link {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 2rem;
+}
 
-
+.download-link:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-size: 12px;
+    border: 1px solid #FF6600;    
+    background-color: transparent !important;
+}
 
 
 

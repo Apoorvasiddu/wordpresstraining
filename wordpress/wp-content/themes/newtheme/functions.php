@@ -216,4 +216,321 @@ function redirect_non_admin_users() {
 }
 add_action('admin_init', 'redirect_non_admin_users');
 
+
+// skills
+
+function custom_enqueue_scripts() {
+    wp_enqueue_script('custom-autocomplete', get_template_directory_uri() . '/html/js/access_skill.js', array('jquery'), null, true);
+    wp_localize_script('custom-autocomplete', 'custom_ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+}
+add_action('wp_enqueue_scripts', 'custom_enqueue_scripts');
+
+function fetch_skills_callback() {
+    $query = sanitize_text_field($_POST['query']);
+    
+    // Make the API request
+    $api_url = 'http://localhost/wordpresstraining/wordpress/wp-json/custom/v1/skills?query=' . urlencode($query);
+
+    $response = wp_remote_get($api_url);
+    
+    if (is_wp_error($response)) {
+        echo json_encode([]);
+    } else {
+        $skills = wp_remote_retrieve_body($response);
+        echo $skills;
+    }
+    
+    wp_die(); // Important to stop execution
+}
+add_action('wp_ajax_fetch_skills', 'fetch_skills_callback');
+add_action('wp_ajax_nopriv_fetch_skills', 'fetch_skills_callback');
+
+
+// Function to check if the user has skills
+function user_has_skills($user_id) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'skills';
+    $skills = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d", $user_id));
+
+    return !empty($skills);
+}
+
+
+
+// file export
+
+
+function export_employee_skills_to_csv() {
+    if ( ! current_user_can( 'manage_options' ) ) {
+        return;
+    }
+
+    global $wpdb;
+
+    // Set the headers to force download of the CSV file
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=employee_skills.csv');
+
+    // Create a file pointer connected to the output stream
+    $output = fopen('php://output', 'w');
+
+    // Output the column headings
+    fputcsv($output, array('Employee ID', 'Employee Name', 'Employee Email', 'Skills'));
+
+    $users = get_users(array('fields' => array('ID', 'display_name', 'user_email')));
+
+    foreach ($users as $user) {
+        $user_id = $user->ID;
+        $skills = $wpdb->get_results($wpdb->prepare(
+            "SELECT skill_name, ratings FROM {$wpdb->prefix}skills WHERE user_id = %d",
+            $user_id
+        ));
+        $formatted_skills = array();
+        foreach ($skills as $skill) {
+            $formatted_skills[] = "{" . $skill->skill_name . ": " . $skill->ratings . "}";
+        }
+        $formatted_skills_string = implode(', ', $formatted_skills);
+        if(empty($formatted_skills_string)){
+            $formatted_skills_string = 'No skills added yet!';
+        }
+
+        fputcsv($output, array($user_id, $user->display_name, $user->user_email, $formatted_skills_string));
+    }
+
+    fclose($output);
+    exit;
+}
+
+function enqueue_font_awesome() {
+    wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
+}
+add_action('wp_enqueue_scripts', 'enqueue_font_awesome');
+
+function handle_csv_export() {
+    export_employee_skills_to_csv();
+}
+add_action('admin_post_download_employee_skills_csv', 'handle_csv_export');
+
+
+
+// Register the settings and settings field
+
+function csp_register_settings() {
+    // Register the setting with a unique option group
+    register_setting('csp_settings', 'csp_skills_list');
+
+    // Add the settings section
+    add_settings_section(
+        'csp_settings_section',
+        'Skills Settings',
+        'csp_settings_section_callback',
+        'csp-settings'
+    );
+
+    // Add the settings field
+    add_settings_field(
+        'csp_skills_list',
+        'Skills List',
+        'csp_skills_list_callback',
+        'csp-settings',
+        'csp_settings_section'
+    );
+}
+add_action('admin_init', 'csp_register_settings');
+
+// Callback for the settings section
+function csp_settings_section_callback() {
+    echo '<p>Enter the comma-separated list of skills below:</p>';
+}
+
+// Callback for the skills list field
+function csp_skills_list_callback() {
+    $skills = get_option('csp_skills_list', '');
+    echo '<textarea id="csp_skills_list" name="csp_skills_list" rows="5" class="large-text">' . esc_textarea($skills) . '</textarea>';
+}
+
+// Add a settings page link under Settings menu
+// function csp_add_settings_link() {
+//     add_options_page(
+//         'Skills Settings',
+//         'Skills',
+//         'manage_options',
+//         'csp-settings',
+//         'csp_settings_page'
+//     );
+// }
+// add_action('admin_menu', 'csp_add_settings_link');
+
+// Display the settings page
+function csp_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1>Skills Settings</h1>
+        <form method="post" action="options.php">
+            <?php
+            settings_fields('csp_settings');
+            do_settings_sections('csp-settings');
+            submit_button();
+            ?>
+        </form>
+    </div>
+    <?php
+}
+
+// custom menu
+function skill_data_menu_page() {
+    // Add the main menu page
+    add_menu_page(
+        'Skill Data',                    
+        'Skill Data',                    
+        'manage_options',                
+        'skill-data-main-slug',          
+        'skill_data_menu_page_html',     
+        'dashicons-welcome-learn-more',  
+        6                                
+    );
+
+    
+    add_submenu_page(
+        'skill-data-main-slug',        
+        'View Skills Data',            
+        'View Skills Data',            
+        'manage_options',              
+        'skill-data-main-slug',              
+        'skill_data_menu_page_html' 
+    );
+
+    
+    add_submenu_page(
+        'skill-data-main-slug',        
+        'Manage Skills Data',          
+        'Manage Skills Data',          
+        'manage_options',              
+        'submenu-slug-2',              
+        'csp_settings_page'            
+    );
+}
+add_action( 'admin_menu', 'skill_data_menu_page' );
+
+function enqueue_datatables_scripts() {
+    wp_enqueue_script( 'jquery' );
+    wp_enqueue_script( 'datatables-js', 'https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js', array( 'jquery' ), null, true );
+    wp_enqueue_style( 'datatables-css', 'https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css' );
+    wp_enqueue_style('skills-data', get_template_directory_uri() .'/html/css/style.css');
+}
+add_action( 'admin_enqueue_scripts', 'enqueue_datatables_scripts' );
+function skill_data_menu_page_html() {
+    global $wpdb;
+
+    if ( !current_user_can( 'manage_options' ) ) {
+        return;
+    }
+
+    ?>
+    <div class="wrap">
+        <h1><?php echo esc_html( 'View Skills Data' ); ?></h1>
+
+        <!-- Download CSV Button -->
+        <button class="button-primary" style="margin-bottom: 10px;">
+            <a href="<?php echo esc_url(admin_url('admin-post.php?action=download_employee_skills_csv')); ?>" class="download-link" title="Download Employee Skills" style="color: white; text-decoration: none;">Download CSV</a>
+        </button>
+
+        <table id="skills-table" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>User Email</th>
+                    <th>Skill Name</th>
+                    <th>Ratings</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be loaded via AJAX -->
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('#skills-table').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "<?php echo esc_url(admin_url('admin-ajax.php')); ?>",
+                    "type": "POST",
+                    "data": {
+                        "action": "fetch_skills_data"
+                    }
+                },
+                "columns": [
+                    { "data": "display_name" },
+                    { "data": "user_email" },
+                    { "data": "skill_name" },
+                    { "data": "ratings" }
+                ],
+                "pageLength": 10
+            });
+        });
+    </script>
+    <?php
+}
+
+add_action('wp_ajax_fetch_skills_data', 'fetch_skills_data');
+add_action('wp_ajax_nopriv_fetch_skills_data', 'fetch_skills_data'); // If you want to allow non-logged in users
+
+function fetch_skills_data() {
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'skills';
+    $user_table = $wpdb->prefix . 'users';
+
+    // Get the total number of records
+    $total_records = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+
+    // Prepare query for filtering, sorting, and pagination
+    $search_value = isset($_POST['search']['value']) ? $_POST['search']['value'] : '';
+    $order_column = isset($_POST['order'][0]['column']) ? $_POST['order'][0]['column'] : 0; // Default to first column
+    $order_dir = isset($_POST['order'][0]['dir']) ? $_POST['order'][0]['dir'] : 'asc'; // Default to ascending
+    $length = isset($_POST['length']) ? intval($_POST['length']) : 10; // Number of records to display
+    $start = isset($_POST['start']) ? intval($_POST['start']) : 0; // Start position for pagination
+
+    // Map DataTable column index to database columns
+    $columns = ['display_name', 'user_email', 'skill_name', 'ratings'];
+    $order_column = $columns[$order_column]; // Get the correct column name
+
+    // Construct the query with filtering and sorting
+    $query = "
+        SELECT s.skill_name, s.ratings, u.display_name, u.user_email
+        FROM $table_name s
+        JOIN $user_table u ON s.user_id = u.ID
+        WHERE u.display_name LIKE %s
+        OR u.user_email LIKE %s
+        OR s.skill_name LIKE %s
+    ";
+
+    $search_query = $wpdb->prepare($query, '%' . $wpdb->esc_like($search_value) . '%', '%' . $wpdb->esc_like($search_value) . '%', '%' . $wpdb->esc_like($search_value) . '%');
+
+    $total_filtered_records = $wpdb->get_var("SELECT COUNT(*) FROM ($search_query) AS subquery");
+
+    // Append order and limit for pagination
+    $search_query .= " ORDER BY $order_column $order_dir LIMIT %d OFFSET %d";
+    $query_with_limit = $wpdb->prepare($search_query, $length, $start);
+    
+    // Execute the query
+    $data = $wpdb->get_results($query_with_limit, ARRAY_A);
+
+    // Prepare response
+    $response = [
+        'draw' => intval($_POST['draw']),
+        'recordsTotal' => intval($total_records),
+        'recordsFiltered' => intval($total_filtered_records),
+        'data' => $data
+    ];
+
+    echo json_encode($response);
+    wp_die(); // Required to terminate and return a proper response
+}
+
+
+// code from other
+
 ?>

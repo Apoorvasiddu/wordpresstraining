@@ -110,3 +110,7 @@ define( 'SMTP_USER', 'employmedev@v2soft.com' ); // Replace with your SMTP usern
 define( 'SMTP_PASSWORD', '0Q7EbJJ97jcuYHGD' ); // Replace with your SMTP password
 define( 'SMTP_FROM', 'employmedev@v2soft.com' ); // Replace with your FROM email
 define( 'SMTP_FROMNAME', 'Apoorva' ); // Replace with your FROM name
+
+define('JWT_AUTH_SECRET_KEY', '5j^F0VrQHCL7yNozq`VRQa`kKZ8^hM`T?,9U (@~`.6<UMOeVWU5F>evO^(21`pF6111111');
+define('JWT_AUTH_CORS_ENABLE', true);
+// define('AUTH_KEY', 'rR$4V> &DLO4uAb>|)UxsQXxq@@Y}lZbL*:}!{[:SaurkT4NvKes<~`Tr@-I6vg~');

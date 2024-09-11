@@ -23,8 +23,12 @@
     <div class="sticky">
         <header class="site-header">
             <span style="font-size: x-large;font-family: cursive;"> <a href="<?php echo home_url('/welcome/'); ?>"> Learning Application </a></span>
-            <span>
-                <?php
+            <span style = "display: flex;">
+                <?php if (current_user_can('manage_options')) : ?>
+                    <a href="<?php echo esc_url(admin_url('admin-post.php?action=download_employee_skills_csv')); ?>" class="download-link" title="Download Employee Skills">
+                        <i class="fa fa-download"></i>
+                    </a>
+                <?php endif;
                 wp_nav_menu(array(
                     'theme_location'  => 'header', // The location in the theme to be used for this menu
                     'menu_class'      => 'headerMenu', // The CSS class for the ul element which forms the menu

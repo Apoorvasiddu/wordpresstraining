@@ -101,8 +101,7 @@ jQuery(document).ready(function($) {
             data: JSON.stringify(data),
             contentType: 'application/json',
             success: function(response) {
-                // Redirect to home page
-                window.location.href = myScriptVars.homeUrl;
+                window.location.href = response.redirect_url;
             },
             error: function(xhr) {
                 showCustomAlert("Failed: " + (xhr.responseJSON.message || 'Unknown error'));

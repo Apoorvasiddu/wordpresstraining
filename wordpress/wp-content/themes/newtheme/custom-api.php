@@ -1,5 +1,15 @@
 <?php
 include get_template_directory() . '/templates/custom-reset-password-email.php';
+$plugin_dir = WP_PLUGIN_DIR . '/jwt-authentication-for-wp-rest-api/includes/vendor/autoload.php';
+
+// Check if the file exists and include it
+if (file_exists($plugin_dir)) {
+    require_once $plugin_dir;
+} else {
+    // Optionally handle the error if the file does not exist
+    error_log('JWT Authentication autoload.php file not found: ' . $plugin_dir);
+}
+use Firebase\JWT\JWT;
 // Contact form API call
 
 add_action('rest_api_init', function () {
@@ -68,7 +78,16 @@ function submit_login($request) {
         return new WP_Error('login_failed', $user->get_error_message(), array('status' => 403));
     }
 
-    return new WP_REST_Response(array('message' => 'Login successful', 'user_id' => $user->ID), 200);
+    $user_id = $user->ID;
+    $has_skills = user_has_skills($user_id);
+
+    $redirect_url = $has_skills ? home_url() : home_url('/skills');
+
+    return new WP_REST_Response(array(
+        'message' => 'Login successful',
+        'user_id' => $user_id,
+        'redirect_url' => $redirect_url
+    ), 200);
 }
 
 // Forgot password API
@@ -215,5 +234,88 @@ function reset_forgot_password(WP_REST_Request $request) {
     // Return success response
     return new WP_REST_Response(array('message' => 'Password has been reset. You can now log in.'), 200);
 }
+
+// Get Skills
+
+// DBC task
+
+add_action('rest_api_init', function () {
+    register_rest_route('jwt-auth/v1', '/trigger-notifications', array(
+        'methods' => 'POST',
+        'callback' => 'handle_trigger_notifications',
+        'permission_callback' => 'check_jwt_authentication',
+    ));
+});
+
+// define('AUTH_KEY', 'rR$4V> &DLO4uAb>|)UxsQXxq@@Y}lZbL*:}!{[:SaurkT4NvKes<~`Tr@-I6vg~');
+function check_jwt_authentication(WP_REST_Request $request) {
+    // Ensure the JWT Auth plugin is available
+    if (!class_exists('Jwt_Auth_Public')) {
+        return new WP_Error('jwt_auth_plugin_not_active', 'JWT Auth plugin is not active', array('status' => 403));
+    }
+
+    // Validate the JWT token
+    $auth_header = $request->get_header('authorization');
+    if (!$auth_header) {
+        return new WP_Error('authorization_header_missing', 'Authorization header is missing', array('status' => 403));
+    }
+
+    list($token_type, $token) = explode(' ', $auth_header);
+    if (strtolower($token_type) !== 'bearer' || !$token) {
+        return new WP_Error('authorization_header_invalid', 'Authorization header is invalid', array('status' => 403));
+    }
+
+    try {
+        return true;
+    } catch (Exception $e) {
+        return new WP_Error('invalid_token', $e->getMessage(), array('status' => 403));
+    }
+}
+function handle_trigger_notifications(WP_REST_Request $request) {
+    // Verify the JWT token
+    $errors = array();
+    $senderExternalUserId = sanitize_text_field($request->get_param('senderExternalUserId'));
+    $deepLinkPageUrl = esc_url_raw($request->get_param('deepLinkPageUrl'));
+    $notificationMessage = sanitize_textarea_field($request->get_param('notificationMessage'));
+
+    if (empty($senderExternalUserId)) {
+        $errors[] = 'Sender External User ID is required!';
+    }
+    if (empty($deepLinkPageUrl) || !filter_var($deepLinkPageUrl, FILTER_VALIDATE_URL)) {
+        $errors[] = 'A valid Deep Link Page URL is required!';
+    }
+    if (empty($notificationMessage)) {
+        $errors[] = 'Notification Message is required!';
+    }
+
+    if (!empty($errors)) {
+        return new WP_Error('validation_error', implode(', ', $errors), array('status' => 400));
+    }
+
+    // Store the notification data
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'trigger_notification';
+
+    $result = $wpdb->insert(
+        $table_name,
+        array(
+            'sender_external_user_id' => $senderExternalUserId,
+            'deep_link_page_url' => $deepLinkPageUrl,
+            'notification_message' => $notificationMessage,
+        ),
+        array(
+            '%s',
+            '%s',
+            '%s'
+        )
+    );
+
+    if ($result === false) {
+        return new WP_Error('db_insert_error', 'Failed to insert notification into the database!', array('status' => 500));
+    }
+
+    return new WP_REST_Response('Notification triggered and stored successfully!', 200);
+}
+
 
 

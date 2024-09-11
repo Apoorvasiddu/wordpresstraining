@@ -1,0 +1,209 @@
+.skills_div {
+    max-width: 600px;
+    margin: 3% auto;
+    padding: 20px;
+    background-color: black;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+}
+
+.save_skills, .cancel_edit  {
+    background-color: #0073aa;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    float: right;
+    margin-bottom: 1rem;
+    background: #FF6600 !important;
+    border: 1px solid #FF6600;    
+}
+.save_skills:hover,  .cancel_edit:hover {
+    border: 1px solid #FF6600;    
+    background-color: transparent !important;
+    width: 76.4px !important;
+    height: 38px !important;
+}
+
+.cancel_edit {
+    margin-left: 1vw;
+}
+
+.edit-skill-btn, .delete-skill-btn {
+    color: #fff;
+    background: #FF6600 !important;
+    border: 1px solid #FF6600;
+    position: relative;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 60px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position above the button */
+    left: 50%;
+    margin-left: -30px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.edit-skill-btn:hover .tooltip, .delete-skill-btn:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.edit-skill-btn:hover, .delete-skill-btn:hover {
+    color: #fff;
+    border: 1px solid #FF6600;    
+    background-color: transparent !important;
+}
+
+.select_drop {
+    gap: 6rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    font-size: large;
+    margin-right: auto;
+    width: -webkit-fill-available;
+}
+/* new code */
+
+/* Add your custom styles here */
+.csp-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.csp-modal-content {
+    background-color: rgba(0, 0, 0, 0.4);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+}
+
+#csp-skill-dropdown, #csp-skill-rating {
+    border: 1px solid #FF6600;
+    outline: none;
+    font-family: "Inter", helvetica, arial, sans-serif;
+    padding: 10px;
+    background: #a3a3a3;
+    border-radius: 0;
+    font-size: 15px;
+}
+
+.csp-close-modal {
+    float: right;
+    font-weight: bold;
+    position: absolute;
+    color: #FF6600;
+    opacity: 1;
+    text-shadow: none;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    font-family: arial;
+    font-weight: normal;
+  
+    padding: 0 7px;
+    background: transparent;
+    z-index: 9;
+    right: 18rem;
+    top: 8rem;
+    font-size: 3rem;
+    height: 46px;
+    display: flex;
+    align-items: center;
+
+}
+
+.csp-close-modal:hover,
+.csp-close-modal:focus {
+    
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.csp-loader {
+    width: 30px;
+    height: 30px;
+    border: 8px solid #FF6600; /* Orange color */
+    border-top: 8px solid black; /* Black color */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* Animation */
+}
+
+.csp-loader {
+    position: fixed;
+    top: 74%;
+    left: 50%;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.csp-loader-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#csp-skill-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#csp-skill-table th,
+#csp-skill-table td {
+    border: 1px solid #FF6600;
+    padding: 8px;
+    text-align: center;
+}
+
+#csp-skill-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color: #FF6600;
+    color: #fff;
+}

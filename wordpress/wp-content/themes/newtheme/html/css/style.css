@@ -25,3 +25,54 @@
     color: black;
     text-decoration: none;
 } */
+
+/* Data tabe */
+
+#skills-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5vw;
+}
+
+#skills-table th,
+#skills-table td {
+    padding: 8px;
+    text-align: center;
+}
+
+#skills-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    font-size: large;
+}
+
+.dataTables_wrapper .dataTables_length select{
+    float: right !important;
+    width: 3vw !important;
+    padding: unset !important;
+    font-size: smaller;
+    margin-left: 1vw;
+}
+
+.dataTables_wrapper .dataTables_length label{
+    font-size: large;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right !important; /* Align to the right */
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right !important; /* Align pagination controls to the right */
+}
+
+.dataTables_wrapper {
+    overflow: hidden !important; /* Clear floats */
+    margin-top: 2vw;
+}
+
+
+
+/* other code */
+
